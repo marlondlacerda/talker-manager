@@ -5,11 +5,10 @@ const app = express();
 app.use(bodyParser.json());
 
 const getTalker = require('./middlewares/getTalker');
-// const getTalkerId = require('./middlewares/getTalkerId');
+const getTalkerById = require('./middlewares/getTalkerById');
 
 app.get('/talker', getTalker);
-
-// app.get('./talker', getTalkerId);
+app.get('/talker/:id', getTalkerById);
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
