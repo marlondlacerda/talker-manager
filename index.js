@@ -4,6 +4,13 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
+const getTalker = require('./middlewares/getTalker');
+// const getTalkerId = require('./middlewares/getTalkerId');
+
+app.get('/talker', getTalker);
+
+// app.get('./talker', getTalkerId);
+
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
 
