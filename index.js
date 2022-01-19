@@ -6,12 +6,37 @@ app.use(bodyParser.json());
 
 const getTalker = require('./middlewares/getTalker');
 const getTalkerById = require('./middlewares/getTalkerById');
-const { isValidEmail, isValidPassword } = require('./middlewares/validations');
+const { isValidEmail, isValidPassword, isValidToken,
+  isValidName, isValidAge, isValidadeTalk } = require('./middlewares/validations');
 const token = require('./middlewares/generateTolken');
 
 app.get('/talker', getTalker);
 app.get('/talker/:id', getTalkerById);
-app.post('/login', isValidEmail, isValidPassword, (_req, res) => res.status(200).json({ token: token() }));
+
+app.post('/login',
+isValidEmail,
+isValidPassword,
+(_req, res) => res.status(200).json({ token: token() }));
+
+app.post('/talker', 
+  isValidToken, 
+  isValidName, 
+  isValidAge, 
+  isValidadeTalk,
+  (_req, res) => {
+    const { name, age } = _req.body;
+    const { rate, watchedAt } = _req.body.talk;
+    const newTalker = { 
+      id: 1,
+      name,
+      age,
+      talk: {
+        watchedAt,
+        rate,
+      },
+    };
+    res.status(201).json(newTalker);
+  });
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
