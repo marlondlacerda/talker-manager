@@ -75,20 +75,21 @@ const isValidRate = (rate) => {
   return true;
 };
 
+const verifyTalk = (talk) => (!talk || !talk.watchedAt || !talk.rate);
 const isValidadeTalk = (req, res, next) => {
-  const { watchedAt, rate } = req.body.talk;
-
-  if (!watchedAt || !rate) {
+  const { talk } = req.body;
+  console.log(talk);
+  if (verifyTalk(talk)) {
     return res
     .status(400)
     .json({ message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios' });
   }
 
-  if (!isValidDate(watchedAt)) {
+  if (!isValidDate(talk.watchedAt)) {
     return res.status(400).json({ message: 'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"' });
   }
 
-  if (!isValidRate(rate)) {
+  if (!isValidRate(talk.rate)) {
     return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
 

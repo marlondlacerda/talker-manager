@@ -1,14 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const fs = require('fs').promises;
 
 const app = express();
 app.use(bodyParser.json());
 
-const getTalker = require('./middlewares/getTalker');
-const getTalkerById = require('./middlewares/getTalkerById');
+const getTalker = require('./controllers/middlewares/getTalker');
+const getTalkerById = require('./controllers/middlewares/getTalkerById');
 const { isValidEmail, isValidPassword, isValidToken,
-  isValidName, isValidAge, isValidadeTalk } = require('./middlewares/validations');
-const token = require('./middlewares/generateTolken');
+  isValidName, isValidAge, isValidadeTalk } = require('./controllers/middlewares/validations');
+const token = require('./controllers/middlewares/generateTolken');
+const writeFile = require('./controllers/writeFile');
 
 app.get('/talker', getTalker);
 app.get('/talker/:id', getTalkerById);
@@ -23,19 +25,17 @@ app.post('/talker',
   isValidName, 
   isValidAge, 
   isValidadeTalk,
-  (_req, res) => {
-    const { name, age } = _req.body;
-    const { rate, watchedAt } = _req.body.talk;
-    const newTalker = { 
-      id: 1,
-      name,
-      age,
-      talk: {
-        watchedAt,
-        rate,
-      },
-    };
-    res.status(201).json(newTalker);
+  async (req, res) => {
+    try {
+      const data = await fs
+      .readFile('./talker.json', 'utf-8')
+      .then((response) => JSON.parse(response));
+      req.body.id = data.length + 1;
+      await writeFile('./talker.json', req.body);
+      return res.status(201).json(req.body);
+    } catch (e) {
+      console.log(e);
+    }
   });
 
 const HTTP_OK_STATUS = 200;
