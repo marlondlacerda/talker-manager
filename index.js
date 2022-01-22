@@ -11,6 +11,8 @@ const { isValidEmail, isValidPassword, isValidToken,
   isValidName, isValidAge, isValidadeTalk } = require('./controllers/middlewares/validations');
 const token = require('./controllers/middlewares/generateTolken');
 const writeFile = require('./controllers/writeFile');
+const talkerJson = require('./talker.json');
+const updateFile = require('./controllers/middlewares/updateFile');
 
 app.get('/talker', getTalker);
 app.get('/talker/:id', getTalkerById);
@@ -37,6 +39,28 @@ app.post('/talker',
       console.log(e);
     }
   });
+
+app.put('/talker/:id',
+isValidToken, 
+isValidName, 
+isValidAge, 
+isValidadeTalk,
+async (req, res) => {
+  try {
+    const data = await fs
+    .readFile('./talker.json', 'utf-8')
+    .then((response) => JSON.parse(response));
+
+    const index = data.findIndex((talker) => (talker.id) === parseInt(req.params.id, 10));
+    req.body.id = parseInt(req.params.id, 10);
+    data[index] = req.body;
+
+    await updateFile('./talker.json', data);
+    return res.status(200).json(req.body);
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';

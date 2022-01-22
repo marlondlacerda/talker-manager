@@ -75,10 +75,9 @@ const isValidRate = (rate) => {
   return true;
 };
 
-const verifyTalk = (talk) => (!talk || !talk.watchedAt || !talk.rate);
+const verifyTalk = (talk) => (!talk || !talk.watchedAt || (talk.rate !== 0 && !talk.rate));
 const isValidadeTalk = (req, res, next) => {
   const { talk } = req.body;
-  console.log(talk);
   if (verifyTalk(talk)) {
     return res
     .status(400)
