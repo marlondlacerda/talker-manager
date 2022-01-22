@@ -5,6 +5,7 @@ const fs = require('fs').promises;
 const app = express();
 app.use(bodyParser.json());
 
+const talkerPath = './talker.json';
 const getTalker = require('./controllers/middlewares/getTalker');
 const getTalkerById = require('./controllers/middlewares/getTalkerById');
 const { isValidEmail, isValidPassword, isValidToken,
@@ -29,10 +30,10 @@ app.post('/talker',
   async (req, res) => {
     try {
       const data = await fs
-      .readFile('./talker.json', 'utf-8')
+      .readFile(talkerPath, 'utf-8')
       .then((response) => JSON.parse(response));
       req.body.id = data.length + 1;
-      await writeFile('./talker.json', req.body);
+      await writeFile(talkerPath, req.body);
       return res.status(201).json(req.body);
     } catch (e) {
       console.log(e);
@@ -47,14 +48,14 @@ isValidadeTalk,
 async (req, res) => {
   try {
     const data = await fs
-    .readFile('./talker.json', 'utf-8')
+    .readFile(talkerPath, 'utf-8')
     .then((response) => JSON.parse(response));
 
     const index = data.findIndex((talker) => (talker.id) === parseInt(req.params.id, 10));
     req.body.id = parseInt(req.params.id, 10);
     data[index] = req.body;
 
-    await updateFile('./talker.json', data);
+    await updateFile(talkerPath, data);
     return res.status(200).json(req.body);
   } catch (e) {
     console.log(e);
@@ -69,13 +70,13 @@ isValidToken,
 async (req, res) => {
   try {
     const data = await fs
-    .readFile('./talker.json', 'utf-8')
+    .readFile(talkerPath, 'utf-8')
     .then((response) => JSON.parse(response));
 
     const index = data.findIndex((talker) => (talker.id) === parseInt(req.params.id, 10));
     data.splice(index, 1);
 
-    await updateFile('./talker.json', data);
+    await updateFile(talkerPath, data);
     return res.status(204).json({ message: 'Deletado com sucesso' });
   } catch (e) {
     console.log(e);
