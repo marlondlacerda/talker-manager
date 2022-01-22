@@ -11,7 +11,6 @@ const { isValidEmail, isValidPassword, isValidToken,
   isValidName, isValidAge, isValidadeTalk } = require('./controllers/middlewares/validations');
 const token = require('./controllers/middlewares/generateTolken');
 const writeFile = require('./controllers/writeFile');
-const talkerJson = require('./talker.json');
 const updateFile = require('./controllers/middlewares/updateFile');
 
 app.get('/talker', getTalker);
@@ -64,6 +63,24 @@ async (req, res) => {
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
+
+app.delete('/talker/:id',
+isValidToken,
+async (req, res) => {
+  try {
+    const data = await fs
+    .readFile('./talker.json', 'utf-8')
+    .then((response) => JSON.parse(response));
+
+    const index = data.findIndex((talker) => (talker.id) === parseInt(req.params.id, 10));
+    data.splice(index, 1);
+
+    await updateFile('./talker.json', data);
+    return res.status(204).json({ message: 'Deletado com sucesso' });
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
