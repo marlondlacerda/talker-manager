@@ -6,6 +6,19 @@ const { isValidName, isValidAge, isValidTalk, isValidToken } = require('./middle
 const talkerService = require('../services/talkerService');
 
 talker.get(
+  '/search',
+  rescue(async (req, res) => {
+    const { authorization } = req.headers;
+    const { q } = req.query;
+    
+    isValidToken(authorization);
+    const talk = await talkerService.getTalk(q);
+
+    res.status(200).json(talk);
+  }),
+);
+
+talker.get(
   '/',
   rescue(async (req, res) => {
     const talk = await talkerService.getAll();
@@ -70,19 +83,6 @@ talker.delete(
     talkerService.remove(id);
 
     res.status(204).json({ message: 'Deletado com sucesso' });
-  }),
-);
-
-talker.get(
-  '/:id/search',
-  rescue(async (req, res) => {
-    const { authorization } = req.headers;
-    const { name } = req.query;
-    
-    isValidToken(authorization);
-    const talk = await talkerService.getTalk(name);
-
-    res.status(200).json(talk);
   }),
 );
 

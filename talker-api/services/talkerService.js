@@ -24,19 +24,26 @@ const add = async (talker) => {
 };
 
 const update = async (talker) => {
-  const data = await readFile();
-  const index = data.findIndex((t) => t.id === talker.id);
-  data[index] = talker;
+  const talkFile = await readFile();
+  const index = talkFile.findIndex((t) => t.id === talker.id);
+  talkFile[index] = talker;
 
-  await updateFile('./talker.json', data);
+  await updateFile('./talker.json', talkFile);
 };
 
 const remove = async (id) => {
-  const data = await readFile();
-  const index = data.findIndex((t) => t.id === +id);
+  const talkFile = await readFile();
+  const index = talkFile.findIndex((t) => t.id === +id);
 
-  await data.splice(index, 1);
-  await updateFile('./talker.json', data);
+  await talkFile.splice(index, 1);
+  await updateFile('./talker.json', talkFile);
+};
+
+const getTalk = async (name) => {
+  const talkFile = await readFile();
+  const person = talkFile.filter((t) => t.name.includes(name));
+
+  return person;
 };
 
 module.exports = { 
@@ -45,4 +52,5 @@ module.exports = {
   add,
   update,
   remove,
+  getTalk,
 };
