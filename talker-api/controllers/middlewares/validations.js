@@ -2,19 +2,19 @@ const tokenRegexDate = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{
 const verifyTalk = (talk) => (!talk || !talk.watchedAt || (talk.rate !== 0 && !talk.rate));
 
 const reportErrorParam = (param) => {
-  // eslint-disable-next-line no-throw-literal
-  throw {
+  const error = {
     code: 'invalid_request',
     message: `O campo "${param}" é obrigatório`,
   };
+  throw error;
 };
 
 const reportErrorLength = (param, caracter) => {
-  // eslint-disable-next-line no-throw-literal
-  throw {
+  const error = {
     code: 'invalid_request',
     message: `O "${param}" deve ter pelo menos ${caracter} caracteres`,
   };
+  throw error;
 };
 
 const isValidEmail = (email) => {
@@ -26,11 +26,11 @@ const isValidEmail = (email) => {
     !email.includes('@') 
     || !email.includes('.com')
   ) {
-    // eslint-disable-next-line no-throw-literal
-    throw {
+    const error = {
       code: 'invalid_request',
       message: 'O "email" deve ter o formato "email@email.com"',
     };
+    throw error;
   }
 };
 
@@ -40,7 +40,6 @@ const isValidPassword = (password) => {
   }
 
   if (password.length < 6) {
-    // eslint-disable-next-line no-throw-literal
     reportErrorLength('password', 6);
   }
 };
@@ -50,19 +49,19 @@ const isValidToken = (authorization) => {
   const verification = tokenRegex.test(authorization);
 
   if (!authorization) {
-    // eslint-disable-next-line no-throw-literal
-    throw {
+    const error = {
       code: 'unauthorized',
       message: 'Token não encontrado',
     };
+    throw error;
   }
 
   if (!verification) {
-    // eslint-disable-next-line no-throw-literal
-    throw {
+    const error2 = {
       code: 'unauthorized',
       message: 'Token inválido',
     };
+    throw error2;
   }
 };
 
@@ -92,31 +91,31 @@ const isValidAge = (age) => {
 
 const isValidDate = (date) => { 
   if (!tokenRegexDate.test(date)) {
-    // eslint-disable-next-line no-throw-literal
-    throw {
+    const error = {
       code: 'invalid_request',
       message: 'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"',
     };
+    throw error;
   }
 };
 
 const isValidRate = (rate) => { 
   if (((rate < 1 || rate > 5))) {
-    // eslint-disable-next-line no-throw-literal
-    throw {
+    const error = {
       code: 'invalid_request',
       message: 'O campo "rate" deve ser um inteiro de 1 à 5',
     };
+    throw error;
   }
 };
 
 const isValidTalk = (talk) => {
   if (verifyTalk(talk)) {
-    // eslint-disable-next-line no-throw-literal
-    throw {
+    const error = {
       code: 'invalid_request',
       message: 'O campo "talk" é obrigatório e "watchedAt" e "rate" não podem ser vazios',
     };
+    throw error;
   }
 
   isValidDate(talk.watchedAt);

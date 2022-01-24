@@ -73,4 +73,10 @@ talker.delete(
   }),
 );
 
+// talker.get(
+//   '/:id/search',
+//   rescue(async (req, res) => {
+//     const { authorization } = req.headers;
+//     const { name } = req.query;
+
 module.exports = talker;

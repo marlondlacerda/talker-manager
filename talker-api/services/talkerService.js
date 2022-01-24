@@ -9,11 +9,11 @@ const getById = async (id) => {
   const result = talkFile.find((t) => t.id === +id);
 
   if (!result) {
-    // eslint-disable-next-line no-throw-literal
-    throw {
+    const error = {
       code: 'not_found',
       message: 'Pessoa palestrante não encontrada',
     };
+    throw error;
   }
 
   return result;
