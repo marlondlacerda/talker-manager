@@ -1,9 +1,9 @@
 const fs = require('fs').promises;
 
+const readFile = require('./readFile');
+
 module.exports = async (fileName, newTalker) => {
-  const data = await fs
-    .readFile('./talker.json', 'utf-8')
-    .then((response) => JSON.parse(response));
+  const data = await readFile();
 
   if (data) { 
     data.push(newTalker);

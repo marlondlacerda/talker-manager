@@ -1,87 +1,20 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs').promises;
-
-const app = express();
-app.use(bodyParser.json());
-
-const talkerPath = './talker.json';
-const getTalker = require('./controllers/middlewares/getTalker');
-const getTalkerById = require('./controllers/middlewares/getTalkerById');
-const { isValidEmail, isValidPassword, isValidToken,
-  isValidName, isValidAge, isValidadeTalk } = require('./controllers/middlewares/validations');
-const token = require('./controllers/middlewares/generateTolken');
-const writeFile = require('./controllers/writeFile');
-const updateFile = require('./controllers/middlewares/updateFile');
-
-app.get('/talker', getTalker);
-app.get('/talker/:id', getTalkerById);
-
-app.post('/login',
-isValidEmail,
-isValidPassword,
-(_req, res) => res.status(200).json({ token: token() }));
-
-app.post('/talker', 
-  isValidToken, 
-  isValidName, 
-  isValidAge, 
-  isValidadeTalk,
-  async (req, res) => {
-    try {
-      const data = await fs
-      .readFile(talkerPath, 'utf-8')
-      .then((response) => JSON.parse(response));
-      req.body.id = data.length + 1;
-      await writeFile(talkerPath, req.body);
-      return res.status(201).json(req.body);
-    } catch (e) {
-      console.log(e);
-    }
-  });
-
-app.put('/talker/:id',
-isValidToken, 
-isValidName, 
-isValidAge, 
-isValidadeTalk,
-async (req, res) => {
-  try {
-    const data = await fs
-    .readFile(talkerPath, 'utf-8')
-    .then((response) => JSON.parse(response));
-
-    const index = data.findIndex((talker) => (talker.id) === parseInt(req.params.id, 10));
-    req.body.id = parseInt(req.params.id, 10);
-    data[index] = req.body;
-
-    await updateFile(talkerPath, data);
-    return res.status(200).json(req.body);
-  } catch (e) {
-    console.log(e);
-  }
-});
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
+const middlewares = require('./talker-api/controllers/middlewares');
+const talkerController = require('./talker-api/controllers/talkerController');
+const loginController = require('./loginController/loginController');
 
-app.delete('/talker/:id',
-isValidToken,
-async (req, res) => {
-  try {
-    const data = await fs
-    .readFile(talkerPath, 'utf-8')
-    .then((response) => JSON.parse(response));
+const app = express();
 
-    const index = data.findIndex((talker) => (talker.id) === parseInt(req.params.id, 10));
-    data.splice(index, 1);
+app.use(bodyParser.json());
 
-    await updateFile(talkerPath, data);
-    return res.status(204).json({ message: 'Deletado com sucesso' });
-  } catch (e) {
-    console.log(e);
-  }
-});
+app.use('/talker', talkerController);
+app.use('/login', loginController);
+
+app.use(middlewares.domainError);
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
