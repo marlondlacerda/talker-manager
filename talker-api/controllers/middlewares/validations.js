@@ -81,11 +81,11 @@ const isValidAge = (age) => {
   }
 
   if (age < 18) {
-    // eslint-disable-next-line no-throw-literal
-    throw {
+    const error = {
       code: 'invalid_request',
       message: 'A pessoa palestrante deve ser maior de idade',
     };
+    throw error;
   }
 };
 

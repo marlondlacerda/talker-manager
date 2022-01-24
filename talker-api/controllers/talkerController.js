@@ -73,10 +73,17 @@ talker.delete(
   }),
 );
 
-// talker.get(
-//   '/:id/search',
-//   rescue(async (req, res) => {
-//     const { authorization } = req.headers;
-//     const { name } = req.query;
+talker.get(
+  '/:id/search',
+  rescue(async (req, res) => {
+    const { authorization } = req.headers;
+    const { name } = req.query;
+    
+    isValidToken(authorization);
+    const talk = await talkerService.getTalk(name);
+
+    res.status(200).json(talk);
+  }),
+);
 
 module.exports = talker;
